@@ -43,7 +43,7 @@ def dynamic_traditional( capacity, weights, values, num_items ):
                 s -= weights[i - 1]
                 num_ops += 1
     print(set_str)
-    print(f"(Subset found in {num_ops} operations.)\n")
+    print(f"(Subset found in {num_ops} operations.)")
 
     return
 
@@ -83,7 +83,7 @@ def dynamic_memory( capacity, weights, values, num_items ):
                 s -= weights[i-1]
                 dpm_struct[1] += 1
     print(set_str)
-    print(f"(Subset found in {dpm_struct[1]} operations.)\n")
+    print(f"(Subset found in {dpm_struct[1]} operations.)")
 
     return
 
@@ -92,10 +92,13 @@ def dynamic_memory_recursive( dpm_struct, capacity, weights, values, num_items )
     if dpm_struct[0][num_items][capacity] < 0:
         value = 0
         if capacity < weights[num_items-1]:
-            value = dynamic_memory_recursive(dpm_struct, capacity, weights, values, num_items - 1)
+            value = dynamic_memory_recursive(dpm_struct, capacity, weights, values, num_items - 1)[0][num_items-1][capacity]
         else:
-            value = max(
-                dynamic_memory_recursive(dpm_struct, capacity, weights, values, num_items - 1)[0][num_items - 1][capacity], (values[num_items - 1] + dynamic_memory_recursive(dpm_struct, capacity - weights[num_items - 1], weights, values, num_items - 1)[0][num_items - 1][capacity - weights[num_items - 1]]))
+            #a = dynamic_memory_recursive(dpm_struct, capacity, weights, values, num_items - 1)[0][num_items - 1][capacity]
+            #z = dynamic_memory_recursive(dpm_struct, capacity - weights[num_items - 1], weights, values, num_items - 1)[0][num_items - 1][capacity - weights[num_items - 1]]
+            #b = (values[num_items - 1] + z)
+            #value = max(a, b)
+            value = max(dynamic_memory_recursive(dpm_struct, capacity, weights, values, num_items - 1)[0][num_items - 1][capacity], (values[num_items - 1] + dynamic_memory_recursive(dpm_struct, capacity - weights[num_items - 1], weights, values, num_items - 1)[0][num_items - 1][capacity - weights[num_items - 1]]))
         dpm_struct[0][num_items][capacity] = value
         dpm_struct[1] += 1
 
@@ -103,5 +106,34 @@ def dynamic_memory_recursive( dpm_struct, capacity, weights, values, num_items )
 
 
 if __name__ == "__main__":
-    dynamic_traditional(50, [10, 20, 30], [60, 100, 120], 3)
-    dynamic_memory(50, [10, 20, 30], [60, 100, 120], 3)
+    while True:
+        inp = input('\nEnter the number of the test file you would like to use: ')
+
+        if inp.isnumeric() == False:
+            print("Invalid input. Enter an integer 0-10")
+
+        if len(inp) == 1:
+            inp = '0' + inp
+
+        fc_str = 'KnapsackTestData/p' + inp + '_c.txt'
+        fw_str = 'KnapsackTestData/p' + inp + '_w.txt'
+        fv_str = 'KnapsackTestData/p' + inp + '_v.txt'
+
+        fc = open(fc_str, 'r')
+        fw = open(fw_str, 'r')
+        fv = open(fv_str, 'r')
+
+        c = int(fc.read())
+        w = []
+        for x in fw:
+            w.append(int(x))
+        v = []
+        for x in fv:
+            v.append(int(x))
+        n = len(w)
+
+        dynamic_traditional(c, w, v, n)
+        dynamic_memory(c, w, v, n)
+
+    # dynamic_traditional(50, [10, 20, 30], [60, 100, 120], 3)
+    # dynamic_memory(50, [10, 20, 30], [60, 100, 120], 3)
