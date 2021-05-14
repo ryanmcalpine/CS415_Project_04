@@ -15,7 +15,7 @@ oc2b = []
 # and the operation counter variable in index 1
 def quick_sort(values):
     struct = [values, 0, 0]
-    quick_sort_r(struct, 0, len(struct[0]) - 1)
+    quick_sort_r(struct, 0, len(struct[0][0]) - 1)
     return struct
 def quick_sort_r( struct, low, high ):
     if low < high:
@@ -25,13 +25,15 @@ def quick_sort_r( struct, low, high ):
     return struct
 def partition(struct, low, high):
     struct[2] = low-1
-    pivot = struct[0][high]
+    pivot = struct[0][0][high]
     for j in range(low, high):
-        if struct[0][j] <= pivot:
+        if struct[0][0][j] <= pivot:
             struct[2] += 1
-            struct[0][struct[2]], struct[0][j] = struct[0][j], struct[0][struct[2]]
+            struct[0][0][struct[2]], struct[0][0][j] = struct[0][0][j], struct[0][0][struct[2]]
+            struct[0][1][struct[2]], struct[0][1][j] = struct[0][1][j], struct[0][1][struct[2]]
             struct[1] += 1
-    struct[0][struct[2]+1], struct[0][high] = struct[0][high], struct[0][struct[2]+1]
+    struct[0][0][struct[2]+1], struct[0][0][high] = struct[0][0][high], struct[0][0][struct[2]+1]
+    struct[0][1][struct[2] + 1], struct[0][1][high] = struct[0][1][high], struct[0][1][struct[2] + 1]
     struct[1] += 1
     struct[2] += 1
     return struct
