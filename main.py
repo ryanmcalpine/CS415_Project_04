@@ -1,5 +1,6 @@
 # by Nicholas Keng and Ryan McAlpine
 from __future__ import division
+# -*- coding: future_fstrings -*-
 
 # Quick sort will take as argument a list
 # with a list of values to sort in index 0
@@ -27,20 +28,53 @@ def partition(struct, low, high):
     struct[2] += 1
     return struct
 
-def knapsack_Greedy(cap, weights, values) :
+def knapsack_Greedy(cap, weights, values, is_printing) :
 
     ratios = []
-    #w = weights.read().splitlines()
-    #weights = []
-    #v = values.read().splitlines()
-    #values = []
 
-    num_weights = len(weights)
-    for i in range(num_weights):
+    total_value = 0
+    total_weight = 0
+    num_items = len(weights)
+    for i in range(num_items):
         r = int(values[i]) / int(weights[i])
-        ratios.append(r)
+        ratios.append([r, i])
 
-    print(ratios)
+        # sort here
+        ratios_struct = quick_sort(ratios)
+        #print(ratios)
+
+        # select the items in this order until the weight of the
+        # next item exceeds the remaining capacity
+        i = 0
+        sub = []
+        while total_weight < cap:
+            idx = ratios[i][1]
+            if total_weight + weights[i] > cap:
+                break_val = (cap - total_weight) / weights[i]
+                total_weight += weights[i] * break_val
+                total_value += values[i] * break_val
+            else:
+                total_weight += weights[i]
+                total_value += values[i]
+            i += 1
+            sub.append[i]
+            #for j in range(num_items):
+                #total_value += values[i]
+                #cap -= total_weight
+        #elif cap - total_weight < 0:
+            #fraction
+            #f = cap / total_weight
+            #total_value += values[i] * f
+            #cap = int(cap - (total_weight * f))
+            #break
+    if is_printing:
+        print("\n-------- Task 2a --------")
+        print("Greedy Approach Optimal value: ", total_value)
+        print(sub)
+
+
+
+    #print(ratios)
 
 def main():
 
@@ -78,7 +112,7 @@ def dynamic_traditional( capacity, weights, values, num_items ):
             num_ops += 1
 
     # Print maximum value, stored in last index of table
-    print(f"Optimal value: F({num_items}, {capacity}) = {table[num_items][capacity]} (found in {num_ops} operations.)")
+    #print(f"Optimal value: F({num_items}, {capacity}) = {table[num_items][capacity]} (found in {num_ops} operations.)")
 
     # Find all optimal values and print them as well
     print("Optimal subset: ")
@@ -98,11 +132,11 @@ def dynamic_traditional( capacity, weights, values, num_items ):
             if table[i][s] != table[i - 1][s]:
                 if s != capacity:
                     set_str = "\n" + set_str
-                set_str = f"F({i}, {s}) = {table[i][s]}" + set_str
+                #set_str = f"F({i}, {s}) = {table[i][s]}" + set_str
                 s -= weights[i - 1]
                 num_ops += 1
     print(set_str)
-    print(f"(Subset found in {num_ops} operations.)")
+    #print(f"(Subset found in {num_ops} operations.)")
 
     return
 
@@ -127,7 +161,7 @@ def dynamic_memory( capacity, weights, values, num_items ):
     dpm_struct = dynamic_memory_recursive(dpm_struct, capacity, weights, values, num_items)
 
     # Print maximum value, stored in last index of table
-    print(f"Optimal value: F({num_items}, {capacity}) = {dpm_struct[0][num_items][capacity]} (found in {dpm_struct[1]} operations.)")
+    #print(f"Optimal value: F({num_items}, {capacity}) = {dpm_struct[0][num_items][capacity]} (found in {dpm_struct[1]} operations.)")
 
     # Find all optimal values and print them as well
     print("Optimal subset: ")
@@ -138,11 +172,11 @@ def dynamic_memory( capacity, weights, values, num_items ):
             if dpm_struct[0][i][s] != dpm_struct[0][i-1][s]:
                 if s != capacity:
                     set_str = "\n" + set_str
-                set_str = f"F({i}, {s}) = {dpm_struct[0][i][s]}" + set_str
+                #set_str = f"F({i}, {s}) = {dpm_struct[0][i][s]}" + set_str
                 s -= weights[i-1]
                 dpm_struct[1] += 1
     print(set_str)
-    print(f"(Subset found in {dpm_struct[1]} operations.)")
+    #print(f"(Subset found in {dpm_struct[1]} operations.)")
 
     return
 
@@ -175,15 +209,15 @@ if __name__ == "__main__":
     while True:
         inp = input('\nEnter the number of the test file you would like to use: ')
 
-        if inp.isnumeric() == False:
-            print("Invalid input. Enter an integer 0-10")
+        #if inp.isnumeric() == False:
+            #print("Invalid input. Enter an integer 0-10")
 
-        if len(inp) == 1:
-            inp = '0' + inp
+        #if len(inp) == 1:
+            #inp = '0' + inp
 
-        fc_str = 'KnapsackTestData/p' + inp + '_c.txt'
-        fw_str = 'KnapsackTestData/p' + inp + '_w.txt'
-        fv_str = 'KnapsackTestData/p' + inp + '_v.txt'
+        fc_str = 'KnapsackTestData/p0' + str(inp) + '_c.txt'
+        fw_str = 'KnapsackTestData/p0' + str(inp) + '_w.txt'
+        fv_str = 'KnapsackTestData/p0' + str(inp) + '_v.txt'
 
         fc = open(fc_str, 'r')
         fw = open(fw_str, 'r')
