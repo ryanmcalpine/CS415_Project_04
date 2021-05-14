@@ -1,6 +1,32 @@
 # by Nicholas Keng and Ryan McAlpine
 from __future__ import division
 
+# Quick sort will take as argument a list
+# with a list of values to sort in index 0
+# and the operation counter variable in index 1
+def quick_sort(values):
+    struct = [values, 0, 0]
+    quick_sort_r(struct, 0, len(struct[0]) - 1)
+    return struct
+def quick_sort_r( struct, low, high ):
+    if low < high:
+        struct = partition(struct, low, high)
+        quick_sort_r(struct, low, struct[2] - 1)
+        quick_sort_r(struct, struct[2] + 1, high)
+    return struct
+def partition(struct, low, high):
+    struct[2] = low-1
+    pivot = struct[0][high]
+    for j in range(low, high):
+        if struct[0][j] <= pivot:
+            struct[2] += 1
+            struct[0][struct[2]], struct[0][j] = struct[0][j], struct[0][struct[2]]
+            struct[1] += 1
+    struct[0][struct[2]+1], struct[0][high] = struct[0][high], struct[0][struct[2]+1]
+    struct[1] += 1
+    struct[2] += 1
+    return struct
+
 def knapsack_Greedy(cap, weights, values) :
 
     ratios = []
@@ -139,6 +165,13 @@ def dynamic_memory_recursive( dpm_struct, capacity, weights, values, num_items )
 
 
 if __name__ == "__main__":
+
+    # vals = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+    # struct = quick_sort(vals)
+    # print(vals) #sorted
+    # print(struct[0]) #same as print(vals)
+    # print(struct[1]) #number of operations
+
     while True:
         inp = input('\nEnter the number of the test file you would like to use: ')
 
@@ -167,6 +200,4 @@ if __name__ == "__main__":
 
         dynamic_traditional(c, w, v, n)
         dynamic_memory(c, w, v, n)
-
-    # dynamic_traditional(50, [10, 20, 30], [60, 100, 120], 3)
-    # dynamic_memory(50, [10, 20, 30], [60, 100, 120], 3)
+        knapsack_Greedy(c, w, v)
