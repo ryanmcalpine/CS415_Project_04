@@ -15,8 +15,9 @@ oc2b = []
 # with a list of values to sort in index 0
 # and the operation counter variable in index 1
 def quick_sort(values):
-    struct = [values, 0, 0]
-    quick_sort_r(struct, 0, len(struct[0][0]) - 1)
+    # values = list of value/original index pairs == [[val, idx], [val, idx] ...]
+    struct = [values, 0, 0] # [values to sort, number of operations, partition index]
+    quick_sort_r(struct, 0, len(struct[0]) - 1)
     return struct
 def quick_sort_r( struct, low, high ):
     if low < high:
@@ -26,15 +27,15 @@ def quick_sort_r( struct, low, high ):
     return struct
 def partition(struct, low, high):
     struct[2] = low-1
-    pivot = struct[0][0][high]
+    pivot = struct[0][high][0]
     for j in range(low, high):
-        if struct[0][0][j] <= pivot:
+        if struct[0][j][0] <= pivot:
             struct[2] += 1
-            struct[0][0][struct[2]], struct[0][0][j] = struct[0][0][j], struct[0][0][struct[2]]
-            struct[0][1][struct[2]], struct[0][1][j] = struct[0][1][j], struct[0][1][struct[2]]
+            struct[0][struct[2]][0], struct[0][j][0] = struct[0][j][0], struct[0][struct[2]][0]
+            struct[0][struct[2]][1], struct[0][j][1] = struct[0][j][1], struct[0][struct[2]][1]
             struct[1] += 1
-    struct[0][0][struct[2]+1], struct[0][0][high] = struct[0][0][high], struct[0][0][struct[2]+1]
-    struct[0][1][struct[2] + 1], struct[0][1][high] = struct[0][1][high], struct[0][1][struct[2] + 1]
+    struct[0][struct[2]+1][0], struct[0][high][0] = struct[0][high][0], struct[0][struct[2]+1][0]
+    struct[0][struct[2] + 1][1], struct[0][high][1] = struct[0][high][1], struct[0][struct[2] + 1][1]
     struct[1] += 1
     struct[2] += 1
     return struct
@@ -68,7 +69,7 @@ def knapsack_Greedy(cap, weights, values, is_printing) :
                 total_weight += weights[i]
                 total_value += values[i]
             i += 1
-            sub.append[i]
+            sub.append(i)
             #for j in range(num_items):
                 #total_value += values[i]
                 #cap -= total_weight
@@ -242,7 +243,7 @@ def run_tests( i, is_printing ):
 
     dynamic_traditional(c, w, v, n, is_printing)
     dynamic_memory(c, w, v, n, is_printing)
-    knapsack_Greedy(c, w, v)
+    knapsack_Greedy(c, w, v, is_printing)
 
     return
 
