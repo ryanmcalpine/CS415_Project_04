@@ -2,6 +2,7 @@
 
 from __future__ import division
 import matplotlib.pyplot as plt
+# -*- coding: future_fstrings -*-
 
 # global operation counter variables
 # for use in graphing for task 3
@@ -38,21 +39,52 @@ def partition(struct, low, high):
     struct[2] += 1
     return struct
 
-def knapsack_Greedy(cap, weights, values) :
+def knapsack_Greedy(cap, weights, values, is_printing) :
 
     ratios = []
-    #w = weights.read().splitlines()
-    #weights = []
-    #v = values.read().splitlines()
-    #values = []
 
-    num_weights = len(weights)
-    for i in range(num_weights):
+    total_value = 0
+    total_weight = 0
+    num_items = len(weights)
+    for i in range(num_items):
         r = int(values[i]) / int(weights[i])
-        ratios.append(r)
+        ratios.append([r, i])
 
-    print(ratios)
+        # sort here
+        ratios_struct = quick_sort(ratios)
+        #print(ratios)
+
+        # select the items in this order until the weight of the
+        # next item exceeds the remaining capacity
+        i = 0
+        sub = []
+        while total_weight < cap:
+            idx = ratios[i][1]
+            if total_weight + weights[i] > cap:
+                break_val = (cap - total_weight) / weights[i]
+                total_weight += weights[i] * break_val
+                total_value += values[i] * break_val
+            else:
+                total_weight += weights[i]
+                total_value += values[i]
+            i += 1
+            sub.append[i]
+            #for j in range(num_items):
+                #total_value += values[i]
+                #cap -= total_weight
+        #elif cap - total_weight < 0:
+            #fraction
+            #f = cap / total_weight
+            #total_value += values[i] * f
+            #cap = int(cap - (total_weight * f))
+            #break
+    if is_printing:
+        print("\n-------- Task 2a --------")
+        print("Greedy Approach Optimal value: ", total_value)
+        print(sub)
+
     return
+
 
 def main():
 
@@ -117,6 +149,7 @@ def dynamic_traditional( capacity, weights, values, num_items, is_printing ):
         print(f"(Subset found in {num_ops} operations.)")
     else:
         oc1a.append(num_ops)
+
     return
 
 def dynamic_memory( capacity, weights, values, num_items, is_printing):
@@ -159,6 +192,7 @@ def dynamic_memory( capacity, weights, values, num_items, is_printing):
         print(f"(Subset found in {dpm_struct[1]} operations.)")
     else:
         oc1b.append(dpm_struct[1])
+
     return
 
 def dynamic_memory_recursive( dpm_struct, capacity, weights, values, num_items ):
