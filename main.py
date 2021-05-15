@@ -1,13 +1,22 @@
 # by Nicholas Keng and Ryan McAlpine
+
 from __future__ import division
+import matplotlib.pyplot as plt
 # -*- coding: future_fstrings -*-
+
+# global operation counter variables
+# for use in graphing for task 3
+oc1a = []
+oc1b = []
+oc2a = []
+oc2b = []
 
 # Quick sort will take as argument a list
 # with a list of values to sort in index 0
 # and the operation counter variable in index 1
 def quick_sort(values):
     struct = [values, 0, 0]
-    quick_sort_r(struct, 0, len(struct[0]) - 1)
+    quick_sort_r(struct, 0, len(struct[0][0]) - 1)
     return struct
 def quick_sort_r( struct, low, high ):
     if low < high:
@@ -17,13 +26,15 @@ def quick_sort_r( struct, low, high ):
     return struct
 def partition(struct, low, high):
     struct[2] = low-1
-    pivot = struct[0][high]
+    pivot = struct[0][0][high]
     for j in range(low, high):
-        if struct[0][j] <= pivot:
+        if struct[0][0][j] <= pivot:
             struct[2] += 1
-            struct[0][struct[2]], struct[0][j] = struct[0][j], struct[0][struct[2]]
+            struct[0][0][struct[2]], struct[0][0][j] = struct[0][0][j], struct[0][0][struct[2]]
+            struct[0][1][struct[2]], struct[0][1][j] = struct[0][1][j], struct[0][1][struct[2]]
             struct[1] += 1
-    struct[0][struct[2]+1], struct[0][high] = struct[0][high], struct[0][struct[2]+1]
+    struct[0][0][struct[2]+1], struct[0][0][high] = struct[0][0][high], struct[0][0][struct[2]+1]
+    struct[0][1][struct[2] + 1], struct[0][1][high] = struct[0][1][high], struct[0][1][struct[2] + 1]
     struct[1] += 1
     struct[2] += 1
     return struct
@@ -72,9 +83,8 @@ def knapsack_Greedy(cap, weights, values, is_printing) :
         print("Greedy Approach Optimal value: ", total_value)
         print(sub)
 
+    return
 
-
-    #print(ratios)
 
 def main():
 
@@ -93,9 +103,7 @@ def main():
     knapsack_Greedy(cap, w, v)
 
 
-def dynamic_traditional( capacity, weights, values, num_items ):
-    print("\n-------- Task 1a --------")
-
+def dynamic_traditional( capacity, weights, values, num_items, is_printing ):
     # Initialize operation counter
     num_ops = 0
 
@@ -111,38 +119,41 @@ def dynamic_traditional( capacity, weights, values, num_items ):
                 table[i][j] = table[i-1][j]
             num_ops += 1
 
-    # Print maximum value, stored in last index of table
-    #print(f"Optimal value: F({num_items}, {capacity}) = {table[num_items][capacity]} (found in {num_ops} operations.)")
+    if is_printing == True:
+        print("\n-------- Task 1a --------")
+        # Print maximum value, stored in last index of table
+        print(f"Optimal value: F({num_items}, {capacity}) = {table[num_items][capacity]} (found in {num_ops} operations.)")
 
-    # Find all optimal values and print them as well
-    print("Optimal subset: ")
-    #for i in range(num_items + 1):
-    #    for j in range(capacity + 1):
-    #        if i == 0:
-    #            i += 1
-    #        if j == 0:
-    #            j += 1
-    #        if table[i][j] != table[i-1][j]:    # and table[i][j] != table[i][j-1]:
-    #            print(f"F({i}, {j}) = {table[i][j]}")
-    #        num_ops += 1
-    s = capacity
-    set_str = ""
-    for i in reversed(range(num_items + 1)):
-        if i != 0:
-            if table[i][s] != table[i - 1][s]:
-                if s != capacity:
-                    set_str = "\n" + set_str
-                #set_str = f"F({i}, {s}) = {table[i][s]}" + set_str
-                s -= weights[i - 1]
-                num_ops += 1
-    print(set_str)
-    #print(f"(Subset found in {num_ops} operations.)")
+        # Find all optimal values and print them as well
+        print("Optimal subset: ")
+        #for i in range(num_items + 1):
+        #    for j in range(capacity + 1):
+        #        if i == 0:
+        #            i += 1
+        #        if j == 0:
+        #            j += 1
+        #        if table[i][j] != table[i-1][j]:    # and table[i][j] != table[i][j-1]:
+        #            print(f"F({i}, {j}) = {table[i][j]}")
+        #        num_ops += 1
+        s = capacity
+        set_str = ""
+        for i in reversed(range(num_items + 1)):
+            if i != 0:
+                if table[i][s] != table[i - 1][s]:
+                    if s != capacity:
+                        set_str = "\n" + set_str
+                    set_str = f"F({i}, {s}) = {table[i][s]}" + set_str
+                    s -= weights[i - 1]
+                    num_ops += 1
+        print(set_str)
+        print(f"(Subset found in {num_ops} operations.)")
+    else:
+        oc1a.append(num_ops)
 
     return
 
-def dynamic_memory( capacity, weights, values, num_items ):
+def dynamic_memory( capacity, weights, values, num_items, is_printing):
     # This function helps get the logic for task 1b started and prints the results
-    print("\n-------- Task 1b --------")
 
     # Initialize operation counter
     num_ops = 0
@@ -160,26 +171,29 @@ def dynamic_memory( capacity, weights, values, num_items ):
     # Now recursive function can handle logic of building table
     dpm_struct = dynamic_memory_recursive(dpm_struct, capacity, weights, values, num_items)
 
-    # Print maximum value, stored in last index of table
-    #print(f"Optimal value: F({num_items}, {capacity}) = {dpm_struct[0][num_items][capacity]} (found in {dpm_struct[1]} operations.)")
+    if is_printing == True:
+        print("\n-------- Task 1b --------")
+        # Print maximum value, stored in last index of table
+        print(f"Optimal value: F({num_items}, {capacity}) = {dpm_struct[0][num_items][capacity]} (found in {dpm_struct[1]} operations.)")
 
-    # Find all optimal values and print them as well
-    print("Optimal subset: ")
-    set_str = ""
-    s = capacity
-    for i in reversed(range(num_items+1)):
-        if i != 0:
-            if dpm_struct[0][i][s] != dpm_struct[0][i-1][s]:
-                if s != capacity:
-                    set_str = "\n" + set_str
-                #set_str = f"F({i}, {s}) = {dpm_struct[0][i][s]}" + set_str
-                s -= weights[i-1]
-                dpm_struct[1] += 1
-    print(set_str)
-    #print(f"(Subset found in {dpm_struct[1]} operations.)")
+        # Find all optimal values and print them as well
+        print("Optimal subset: ")
+        set_str = ""
+        s = capacity
+        for i in reversed(range(num_items+1)):
+            if i != 0:
+                if dpm_struct[0][i][s] != dpm_struct[0][i-1][s]:
+                    if s != capacity:
+                        set_str = "\n" + set_str
+                    set_str = f"F({i}, {s}) = {dpm_struct[0][i][s]}" + set_str
+                    s -= weights[i-1]
+                    dpm_struct[1] += 1
+        print(set_str)
+        print(f"(Subset found in {dpm_struct[1]} operations.)")
+    else:
+        oc1b.append(dpm_struct[1])
 
     return
-
 
 def dynamic_memory_recursive( dpm_struct, capacity, weights, values, num_items ):
     if dpm_struct[0][num_items][capacity] < 0:
@@ -197,41 +211,66 @@ def dynamic_memory_recursive( dpm_struct, capacity, weights, values, num_items )
 
     return dpm_struct
 
+def run_tests( i, is_printing ):
+    if str(i).isnumeric() == False:
+        print("Invalid input. Enter an integer 0-10")
+        return
+
+    if len(str(i)) == 1:
+        i = str('0') + str(i)
+
+    if int(i) < 0 or int(i) > 10:
+        print("Invalid input. Enter an integer 0-10")
+        return
+
+    fc_str = 'KnapsackTestData/p' + i + '_c.txt'
+    fw_str = 'KnapsackTestData/p' + i + '_w.txt'
+    fv_str = 'KnapsackTestData/p' + i + '_v.txt'
+
+    fc = open(fc_str, 'r')
+    fw = open(fw_str, 'r')
+    fv = open(fv_str, 'r')
+
+    c = int(fc.read())
+    w = []
+    for x in fw:
+        w.append(int(x))
+    v = []
+    for x in fv:
+        v.append(int(x))
+    n = len(w)
+
+    dynamic_traditional(c, w, v, n, is_printing)
+    dynamic_memory(c, w, v, n, is_printing)
+    knapsack_Greedy(c, w, v)
+
+    return
 
 if __name__ == "__main__":
-
     # vals = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
     # struct = quick_sort(vals)
     # print(vals) #sorted
     # print(struct[0]) #same as print(vals)
     # print(struct[1]) #number of operations
-
     while True:
         inp = input('\nEnter the number of the test file you would like to use: ')
+        run_tests(inp, True)
 
-        #if inp.isnumeric() == False:
-            #print("Invalid input. Enter an integer 0-10")
+        print("Calculating values for graph...")
+        for i in range(8):
+            run_tests(i, False)
+        print("Plotting data...")
+        fig = plt.figure()
+        # Task 1a
+        ax1 = fig.add_subplot(2, 2, 1)
+        ax1.scatter( range(8), oc1a, label="Task 1a" )
+        ax1.set_xlabel('Test Case #')
+        ax1.set_ylabel('Number of Operations')
+        # Task 1b
+        ax2 = fig.add_subplot(2, 2, 2)
+        ax2.scatter(range(8), oc1b, label="Task 1a")
+        ax2.set_xlabel('Test Case #')
+        ax2.set_ylabel('Number of Operations')
+        print("Done.")
 
-        #if len(inp) == 1:
-            #inp = '0' + inp
-
-        fc_str = 'KnapsackTestData/p0' + str(inp) + '_c.txt'
-        fw_str = 'KnapsackTestData/p0' + str(inp) + '_w.txt'
-        fv_str = 'KnapsackTestData/p0' + str(inp) + '_v.txt'
-
-        fc = open(fc_str, 'r')
-        fw = open(fw_str, 'r')
-        fv = open(fv_str, 'r')
-
-        c = int(fc.read())
-        w = []
-        for x in fw:
-            w.append(int(x))
-        v = []
-        for x in fv:
-            v.append(int(x))
-        n = len(w)
-
-        dynamic_traditional(c, w, v, n)
-        dynamic_memory(c, w, v, n)
-        knapsack_Greedy(c, w, v)
+        plt.show()
