@@ -2,26 +2,22 @@
 
 from __future__ import division
 import matplotlib.pyplot as plt
+import heapq
 
 # -*- coding: future_fstrings -*-
 
-# global operation counter variables
+# Global operation counter variables
 # for use in graphing for task 3
 oc1a = []
 oc1b = []
 oc2a = []
 oc2b = []
 
-
-# Quick sort will take as argument a list
-# with a list of values to sort in index 0
-# and the operation counter variable in index 1
 def quick_sort( values ):
     # values = list of value/original index pairs == [[val, idx], [val, idx] ...]
     struct = [values, 0, 0]  # [values to sort, number of operations, partition index]
     quick_sort_r(struct, 0, len(struct[0]) - 1)
     return struct
-
 
 def quick_sort_r( struct, low, high ):
     if low < high:
@@ -29,7 +25,6 @@ def quick_sort_r( struct, low, high ):
         quick_sort_r(struct, low, struct[2] - 1)
         quick_sort_r(struct, struct[2] + 1, high)
     return struct
-
 
 def partition( struct, low, high ):
     struct[2] = low - 1
@@ -67,16 +62,16 @@ def knapsack_Greedy( cap, weights, values, num_items, is_printing ):
     while total_weight < cap:
         break_val = 1
         idx = ratios[i][1]
-        if total_weight + weights[i] > cap:
-            break_val = (cap - total_weight) / weights[i]
-            total_weight += weights[i] * break_val
-            total_value += values[i] * break_val
+        if total_weight + weights[idx] > cap:
+            break_val = (cap - total_weight) / weights[idx]
+            total_weight += weights[idx] * break_val
+            total_value += values[idx] * break_val
         else:
-            total_weight += weights[i]
-            total_value += values[i]
+            total_weight += weights[idx]
+            total_value += values[idx]
         num_ops += 1
+        subset.append([break_val, idx, total_weight, total_value])
         i += 1
-        subset.append([break_val, i, total_weight, total_value])
         # for j in range(num_items):
         # total_value += values[i]
         # cap -= total_weight
@@ -94,29 +89,67 @@ def knapsack_Greedy( cap, weights, values, num_items, is_printing ):
             if x[0] == 1:
                 print(f"F({x[1]}, {x[2]}) = {x[3]}")
             else:
-                print(f"F({x[1]}, {int(x[2])}) = {int(x[3])}     (Item broken, {x[0]}% of it was taken)")
+                print(f"F({x[1]}, {int(x[2])}) = {int(x[3])}     (Item broken, {100 * x[0]}% of it was taken)")
         print(f"(Subset found in {num_ops} operations. No additional operations were required.)")
     else:
         oc2a.append(num_ops)
 
     return
 
+def greedy_heap( capacity, weights, values, num_items, is_printing ):
+    num_ops = 0
+    ratios = []
+    for i in range(num_items):
+        r = -1 * int(values[i]) / int(weights[i])
+        ratios.append([r, i])
+    heapq.heapify(ratios)
 
-def main():
-    # Read the Capacity file and make it equal to cap
-    file_cap = open('./KnapsackTestData/p01_c.txt', 'r')
-    cap = file_cap.readlines()
+    subset = []
+    total_weight = 0
+    total_value = 0
+    while total_weight < capacity:
+        tmp = heapq.heappop(ratios)
+        break_val = 1
+        idx = tmp[1]
+        if total_weight + weights[idx] > capacity:
+            break_val = (capacity - total_weight) / weights[idx]
+            total_weight += weights[idx] * break_val
+            total_value += values[idx] * break_val
+        else:
+            total_weight += weights[idx]
+            total_value += values[idx]
+        num_ops += 1
+        subset.append([break_val, idx, total_weight, total_value])
+
+    if is_printing:
+        print("\n-------- Task 2b --------")
+        print(f"Optimal value: {total_value} (found in {num_ops} operations.)")
+        print("Optimal subset: ")
+        for x in subset:
+            if x[0] == 1:
+                print(f"F({x[1]}, {x[2]}) = {x[3]}")
+            else:
+                print(f"F({x[1]}, {int(x[2])}) = {int(x[3])}     (Item broken, {100 * x[0]}% of it was taken)")
+        print(f"(Subset found in {num_ops} operations. No additional operations were required.)")
+    else:
+        oc2b.append(num_ops)
+
+    return
+
+#def main():
+#    # Read the Capacity file and make it equal to cap
+#    file_cap = open('./KnapsackTestData/p01_c.txt', 'r')
+#    cap = file_cap.readlines()
 
     # Read the weight file
-    file_weight = open('./KnapsackTestData/p01_w.txt', 'r')
-    w = file_weight.readlines()
+#    file_weight = open('./KnapsackTestData/p01_w.txt', 'r')
+#    w = file_weight.readlines()
 
     # Read the value file
-    file_value = open('./KnapsackTestData/p01_v.txt', 'r')
-    v = file_value.readlines()
+#    file_value = open('./KnapsackTestData/p01_v.txt', 'r')
+#    v = file_value.readlines()
 
-    knapsack_Greedy(cap, w, v)
-
+#    knapsack_Greedy(cap, w, v)
 
 def dynamic_traditional( capacity, weights, values, num_items, is_printing ):
     # Initialize operation counter
@@ -167,7 +200,6 @@ def dynamic_traditional( capacity, weights, values, num_items, is_printing ):
         oc1a.append(num_ops)
 
     return
-
 
 def dynamic_memory( capacity, weights, values, num_items, is_printing ):
     # This function helps get the logic for task 1b started and prints the results
@@ -269,6 +301,7 @@ def run_tests( i, is_printing ):
     dynamic_traditional(c, w, v, n, is_printing)
     dynamic_memory(c, w, v, n, is_printing)
     knapsack_Greedy(c, w, v, n, is_printing)
+    greedy_heap(c, w, v, n, is_printing)
 
     return
 
@@ -306,6 +339,12 @@ if __name__ == "__main__":
         ax3.set_xlabel('Test Case #')
         ax3.set_ylabel('Number of Operations')
         ax3.set_title("Task 2a")
+        # Task 2b
+        ax4 = fig.add_subplot(2, 2, 4)
+        ax4.scatter(range(8), oc2b)
+        ax4.set_xlabel('Test Case #')
+        ax4.set_ylabel('Number of Operations')
+        ax4.set_title("Task 2b")
         print("Done.")
 
         plt.show()
