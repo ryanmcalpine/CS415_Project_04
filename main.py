@@ -13,11 +13,13 @@ oc1b = []
 oc2a = []
 oc2b = []
 
+
 def quick_sort( values ):
     # values = list of value/original index pairs == [[val, idx], [val, idx] ...]
     struct = [values, 0, 0]  # [values to sort, number of operations, partition index]
     quick_sort_r(struct, 0, len(struct[0]) - 1)
     return struct
+
 
 def quick_sort_r( struct, low, high ):
     if low < high:
@@ -25,6 +27,7 @@ def quick_sort_r( struct, low, high ):
         quick_sort_r(struct, low, struct[2] - 1)
         quick_sort_r(struct, struct[2] + 1, high)
     return struct
+
 
 def partition( struct, low, high ):
     struct[2] = low - 1
@@ -96,6 +99,7 @@ def knapsack_Greedy( cap, weights, values, num_items, is_printing ):
 
     return
 
+
 def greedy_heap( capacity, weights, values, num_items, is_printing ):
     num_ops = 0
     ratios = []
@@ -136,16 +140,17 @@ def greedy_heap( capacity, weights, values, num_items, is_printing ):
 
     return
 
-#def main():
+
+# def main():
 #    # Read the Capacity file and make it equal to cap
 #    file_cap = open('./KnapsackTestData/p01_c.txt', 'r')
 #    cap = file_cap.readlines()
 
-    # Read the weight file
+# Read the weight file
 #    file_weight = open('./KnapsackTestData/p01_w.txt', 'r')
 #    w = file_weight.readlines()
 
-    # Read the value file
+# Read the value file
 #    file_value = open('./KnapsackTestData/p01_v.txt', 'r')
 #    v = file_value.readlines()
 
@@ -200,6 +205,7 @@ def dynamic_traditional( capacity, weights, values, num_items, is_printing ):
         oc1a.append(num_ops)
 
     return
+
 
 def dynamic_memory( capacity, weights, values, num_items, is_printing ):
     # This function helps get the logic for task 1b started and prints the results
@@ -307,11 +313,6 @@ def run_tests( i, is_printing ):
 
 
 if __name__ == "__main__":
-    # vals = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-    # struct = quick_sort(vals)
-    # print(vals) #sorted
-    # print(struct[0]) #same as print(vals)
-    # print(struct[1]) #number of operations
     while True:
         inp = input('\nEnter the number of the test file you would like to use: ')
         run_tests(inp, True)

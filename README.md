@@ -20,3 +20,12 @@ knapsack problem with dynamic programming is far more efficient than using the t
 approach. This is because the traditional approach involves calculating an entire table of values, whereas the
 memory function approach works backwards from the maximum value, calculating only the steps used along the way.
 
+Similarly, when comparing Tasks 2a and 2b, it is clear that the greedy technique utilizing a max-heap is quite
+a bit faster than the greedy technique with the ratio list. This is because the heap does not require sorting
+after it is constructed.
+
+### Known Issues
+- The optimal value returned by the greedy technique for Task 2a seems to be coming up short, despite using very
+similar logic to Task 2b (which appears to be working as intended).
+- The number of operations required by Task 2b is shown much lower than it should be. This is because we are still
+using a built-in heap function and are unable to account for the number of operations it requires.
